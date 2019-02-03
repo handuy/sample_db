@@ -55,6 +55,19 @@ type NationCup struct {
 	CupID     string `json:"cup_id" sql:",pk"`
 }
 
+type Player struct {
+	TableName []byte `sql:"public.player"`
+	ID        string `json:"id"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Age       int    `json:"age"`
+	Position  string `json:"position"` 
+	Height    int    `json:"height"`
+	Weight    int    `json:"weight"`
+	ClubID    string `json:"club_id"`
+	NationID  string `json:"nation_id"`
+}
+
 // ConnectDb kết nối CSDL qua cấu hình
 func ConnectDb() (db *pg.DB) {
 	db = pg.Connect(&pg.Options{
@@ -73,9 +86,10 @@ func InitializeDatabase(db *pg.DB) {
 	var cup Cup
 	var nation Nation
 	var nationCup NationCup
+	var player Player
 
 	// Tạo bảng
-	for _, model := range []interface{}{&league, &club, &cup, &nation, &clubLeague, &nationCup} {
+	for _, model := range []interface{}{&league, &club, &cup, &nation, &clubLeague, &nationCup, &player} {
 		err := db.CreateTable(model, &orm.CreateTableOptions{
 			Temp:          false,
 			FKConstraints: true,
@@ -86,40 +100,58 @@ func InitializeDatabase(db *pg.DB) {
 		}
 	}
 
+	// Thêm FK constraints cho bảng club_league
+	// _, err := db.Exec(`
+	// 	ALTER TABLE club_league 
+	// 	ADD CONSTRAINT club_league_club_id_fkey FOREIGN KEY (club_id) REFERENCES club(id)
+	// `)
+	// if err != nil {
+	// 	log.Println(err)
+	// }
+	// _, err = db.Exec(`
+	// 	ALTER TABLE club_league 
+	// 	ADD CONSTRAINT club_league_league_id_fkey FOREIGN KEY (league_id) REFERENCES league(id)
+	// `)
+	// if err != nil {
+	// 	log.Println(err)
+	// }
+
+
+	// Thêm FK constraints cho bảng nation_cup
+	// _, err = db.Exec(`
+	// 	ALTER TABLE nation_cup 
+	// 	ADD CONSTRAINT nation_cup_nation_id_fkey FOREIGN KEY (nation_id) REFERENCES nation(id)
+	// `)
+	// if err != nil {
+	// 	log.Println(err)
+	// }
+	// _, err = db.Exec(`
+	// 	ALTER TABLE nation_cup 
+	// 	ADD CONSTRAINT nation_cup_cup_id_fkey FOREIGN KEY (cup_id) REFERENCES cup(id)
+	// `)
+	// if err != nil {
+	// 	log.Println(err)
+	// }
+
+
+	// Thêm FK constraints cho bảng player
 	_, err := db.Exec(`
-		ALTER TABLE club_league 
-		ADD CONSTRAINT club_league_club_id_fkey FOREIGN KEY (club_id) REFERENCES club(id)
+		ALTER TABLE player 
+		ADD CONSTRAINT player_club_id_fkey FOREIGN KEY (club_id) REFERENCES club(id)
 	`)
 	if err != nil {
 		log.Println(err)
 	}
-
 	_, err = db.Exec(`
-		ALTER TABLE club_league 
-		ADD CONSTRAINT club_league_league_id_fkey FOREIGN KEY (league_id) REFERENCES league(id)
-	`)
-	if err != nil {
-		log.Println(err)
-	}
-
-	_, err = db.Exec(`
-		ALTER TABLE nation_cup 
-		ADD CONSTRAINT nation_cup_nation_id_fkey FOREIGN KEY (nation_id) REFERENCES nation(id)
-	`)
-	if err != nil {
-		log.Println(err)
-	}
-
-	_, err = db.Exec(`
-		ALTER TABLE nation_cup 
-		ADD CONSTRAINT nation_cup_cup_id_fkey FOREIGN KEY (cup_id) REFERENCES cup(id)
+		ALTER TABLE player 
+		ADD CONSTRAINT player_nation_id_fkey FOREIGN KEY (nation_id) REFERENCES nation(id)
 	`)
 	if err != nil {
 		log.Println(err)
 	}
 }
 
-func SaveData(db *pg.DB) {
+func SaveClubLeagueData(db *pg.DB) {
 	for i := 1; i <= 1000; i++ {
 		var league League
 		league.ID = xid.New().String()
@@ -148,12 +180,15 @@ func SaveData(db *pg.DB) {
 		INSERT INTO club_league (club_id, league_id)
 		SELECT club.id AS club_id, league.id AS league_id
 		FROM club, league
-		LIMIT 10000000
+		LIMIT 1000000
 	`)
 	if err != nil {
 		log.Println(err)
 	}
+}
 
+
+func SaveNationCupData(db *pg.DB) {
 	for i := 1; i <= 1000; i++ {
 		var cup Cup
 		cup.ID = xid.New().String()
@@ -187,7 +222,7 @@ func SaveData(db *pg.DB) {
 		}
 	}
 
-	_, err = db.Exec(`
+	_, err := db.Exec(`
 		INSERT INTO nation_cup (nation_id, cup_id)
 		SELECT nation.id AS nation_id, cup.id AS cup_id
 		FROM nation, cup
@@ -195,5 +230,55 @@ func SaveData(db *pg.DB) {
 	`)
 	if err != nil {
 		log.Println(err)
+	}
+}
+
+func SavePlayerData(db *pg.DB) {
+	var clubIds []string
+	_, err := db.Query(&clubIds, `SELECT id AS club_ids FROM club`)
+	if err != nil {
+		log.Println(err)
+	}
+	minClub := 0
+	maxClub := len(clubIds) - 1
+
+	var nationIds []string
+	_, err = db.Query(&nationIds, `SELECT id AS nation_ids FROM nation`)
+	if err != nil {
+		log.Println(err)
+	}
+	minNation := 0
+	maxNation := len(nationIds) - 1
+
+	minAge := 18
+	maxAge := 40
+
+	positions := []string{"Goalkeeper", "Defender", "Midfielder", "Striker"}
+	minPos := 0
+	maxPos := len(positions) - 1
+
+	minHeight := 160
+	maxHeight := 200
+
+	minWeight := 65
+	maxWeight := 90
+
+	for i := 1; i <= 1000000; i++ {
+		rand.Seed(time.Now().UnixNano())
+		var player Player
+		player.ID = xid.New().String()
+		player.FirstName = randomdata.FirstName(randomdata.Male)
+		player.LastName = randomdata.LastName()
+		player.Age = rand.Intn(maxAge) + minAge
+		player.Position = positions[ rand.Intn(maxPos) + minPos ]
+		player.Height = rand.Intn(maxHeight) + minHeight
+		player.Weight = rand.Intn(maxWeight) + minWeight
+		player.ClubID = clubIds[ rand.Intn(maxClub) + minClub ]
+		player.NationID = nationIds[ rand.Intn(maxNation) + minNation ]
+
+		err := db.Insert(&player)
+		if err != nil {
+			log.Println(err)
+		}
 	}
 }
