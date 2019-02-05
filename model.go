@@ -61,7 +61,7 @@ type Player struct {
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
 	Age       int    `json:"age"`
-	Position  string `json:"position"` 
+	Position  string `json:"position"`
 	Height    int    `json:"height"`
 	Weight    int    `json:"weight"`
 	ClubID    string `json:"club_id"`
@@ -246,12 +246,12 @@ func SavePlayerData(db *pg.DB) {
 	_, err = db.Query(&nationIds, `SELECT id AS nation_ids FROM nation`)
 	if err != nil {
 		log.Println(err)
-	}
+	} 
 	minNation := 0
 	maxNation := len(nationIds) - 1
 
 	minAge := 18
-	maxAge := 40
+	maxAge := 22 
 
 	positions := []string{"Goalkeeper", "Defender", "Midfielder", "Striker"}
 	minPos := 0
@@ -263,9 +263,11 @@ func SavePlayerData(db *pg.DB) {
 	minWeight := 65
 	maxWeight := 90
 
+	var playerList []Player
+
 	for i := 1; i <= 1000000; i++ {
-		rand.Seed(time.Now().UnixNano())
 		var player Player
+		rand.Seed(time.Now().UnixNano())
 		player.ID = xid.New().String()
 		player.FirstName = randomdata.FirstName(randomdata.Male)
 		player.LastName = randomdata.LastName()
@@ -276,9 +278,11 @@ func SavePlayerData(db *pg.DB) {
 		player.ClubID = clubIds[ rand.Intn(maxClub) + minClub ]
 		player.NationID = nationIds[ rand.Intn(maxNation) + minNation ]
 
-		err := db.Insert(&player)
-		if err != nil {
-			log.Println(err)
-		}
+		playerList = append(playerList, player)
+	}
+
+	err = db.Insert(&playerList)
+	if err != nil {
+		log.Println(err)
 	}
 }
