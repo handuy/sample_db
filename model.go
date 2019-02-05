@@ -101,41 +101,41 @@ func InitializeDatabase(db *pg.DB) {
 	}
 
 	// Thêm FK constraints cho bảng club_league
-	// _, err := db.Exec(`
-	// 	ALTER TABLE club_league 
-	// 	ADD CONSTRAINT club_league_club_id_fkey FOREIGN KEY (club_id) REFERENCES club(id)
-	// `)
-	// if err != nil {
-	// 	log.Println(err)
-	// }
-	// _, err = db.Exec(`
-	// 	ALTER TABLE club_league 
-	// 	ADD CONSTRAINT club_league_league_id_fkey FOREIGN KEY (league_id) REFERENCES league(id)
-	// `)
-	// if err != nil {
-	// 	log.Println(err)
-	// }
+	_, err := db.Exec(`
+		ALTER TABLE club_league 
+		ADD CONSTRAINT club_league_club_id_fkey FOREIGN KEY (club_id) REFERENCES club(id)
+	`)
+	if err != nil {
+		log.Println(err)
+	}
+	_, err = db.Exec(`
+		ALTER TABLE club_league 
+		ADD CONSTRAINT club_league_league_id_fkey FOREIGN KEY (league_id) REFERENCES league(id)
+	`)
+	if err != nil {
+		log.Println(err)
+	}
 
 
 	// Thêm FK constraints cho bảng nation_cup
-	// _, err = db.Exec(`
-	// 	ALTER TABLE nation_cup 
-	// 	ADD CONSTRAINT nation_cup_nation_id_fkey FOREIGN KEY (nation_id) REFERENCES nation(id)
-	// `)
-	// if err != nil {
-	// 	log.Println(err)
-	// }
-	// _, err = db.Exec(`
-	// 	ALTER TABLE nation_cup 
-	// 	ADD CONSTRAINT nation_cup_cup_id_fkey FOREIGN KEY (cup_id) REFERENCES cup(id)
-	// `)
-	// if err != nil {
-	// 	log.Println(err)
-	// }
+	_, err = db.Exec(`
+		ALTER TABLE nation_cup 
+		ADD CONSTRAINT nation_cup_nation_id_fkey FOREIGN KEY (nation_id) REFERENCES nation(id)
+	`)
+	if err != nil {
+		log.Println(err)
+	}
+	_, err = db.Exec(`
+		ALTER TABLE nation_cup 
+		ADD CONSTRAINT nation_cup_cup_id_fkey FOREIGN KEY (cup_id) REFERENCES cup(id)
+	`)
+	if err != nil {
+		log.Println(err)
+	}
 
 
 	// Thêm FK constraints cho bảng player
-	_, err := db.Exec(`
+	_, err = db.Exec(`
 		ALTER TABLE player 
 		ADD CONSTRAINT player_club_id_fkey FOREIGN KEY (club_id) REFERENCES club(id)
 	`)
@@ -152,17 +152,18 @@ func InitializeDatabase(db *pg.DB) {
 }
 
 func SaveClubLeagueData(db *pg.DB) {
+	log.Println("Begin save club data")
+
+	var leagueList []League
 	for i := 1; i <= 1000; i++ {
 		var league League
 		league.ID = xid.New().String()
 		league.Name = sillyname.GenerateStupidName()
 
-		err := db.Insert(&league)
-		if err != nil {
-			log.Println(err)
-		}
+		leagueList = append(leagueList, league)
 	}
 
+	var clubList []Club
 	for i := 1; i <= 20000; i++ {
 		var club Club
 		club.ID = xid.New().String()
@@ -170,13 +171,20 @@ func SaveClubLeagueData(db *pg.DB) {
 		club.Stadium = sillyname.GenerateStupidName()
 		club.CoachName = randomdata.FullName(randomdata.Male)
 
-		err := db.Insert(&club)
-		if err != nil {
-			log.Println(err)
-		}
+		clubList = append(clubList, club)
 	}
 
-	_, err := db.Exec(`
+	err := db.Insert(&leagueList)
+	if err != nil {
+		log.Println(err)
+	}
+
+	err = db.Insert(&clubList)
+	if err != nil {
+		log.Println(err)
+	}
+
+	_, err = db.Exec(`
 		INSERT INTO club_league (club_id, league_id)
 		SELECT club.id AS club_id, league.id AS league_id
 		FROM club, league
@@ -185,44 +193,50 @@ func SaveClubLeagueData(db *pg.DB) {
 	if err != nil {
 		log.Println(err)
 	}
+
+	log.Println("Finished save club data")
 }
 
-
 func SaveNationCupData(db *pg.DB) {
+	log.Println("Begin save nation data")
+
+	var cupList []Cup
 	for i := 1; i <= 1000; i++ {
 		var cup Cup
 		cup.ID = xid.New().String()
 		cup.Name = sillyname.GenerateStupidName()
 
-		err := db.Insert(&cup)
-		if err != nil {
-			log.Println(err)
-		}
+		cupList = append(cupList, cup)
 	}
 
 	query := gountries.New()
 	allCountries := query.FindAllCountries()
 	min := 1
 	max := 247
+	var nationList []Nation
 	for _, v := range allCountries {
 		var nation Nation
-
 		nation.ID = xid.New().String()
 		nation.Name = v.Name.Official
 		nation.Continent = v.Continent
-
 		rand.Seed(time.Now().UnixNano())
 		nation.Ranking = rand.Intn(max) + min
-
 		nation.CoachName = randomdata.FullName(randomdata.Male)
 
-		err := db.Insert(&nation)
-		if err != nil {
-			log.Println(err)
-		}
+		nationList = append(nationList, nation)
 	}
 
-	_, err := db.Exec(`
+	err := db.Insert(&cupList)
+	if err != nil {
+		log.Println(err)
+	}
+
+	err = db.Insert(&nationList)
+	if err != nil {
+		log.Println(err)
+	}
+
+	_, err = db.Exec(`
 		INSERT INTO nation_cup (nation_id, cup_id)
 		SELECT nation.id AS nation_id, cup.id AS cup_id
 		FROM nation, cup
@@ -231,9 +245,13 @@ func SaveNationCupData(db *pg.DB) {
 	if err != nil {
 		log.Println(err)
 	}
+
+	log.Println("Finished save nation data")
 }
 
 func SavePlayerData(db *pg.DB) {
+	log.Println("Begin save player data")
+
 	var clubIds []string
 	_, err := db.Query(&clubIds, `SELECT id AS club_ids FROM club`)
 	if err != nil {
@@ -285,4 +303,6 @@ func SavePlayerData(db *pg.DB) {
 	if err != nil {
 		log.Println(err)
 	}
+
+	log.Println("Finished save player data")
 }
