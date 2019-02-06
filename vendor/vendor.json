@@ -1,0 +1,91 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "vmaUVLsyu2kdFpZG4SidKmYkLUo=",
+			"path": "github.com/Pallinder/go-randomdata",
+			"revision": "97a2356fcab20708fb8ae46cbbf69a5bc9feca63",
+			"revisionTime": "2018-10-31T20:14:56Z"
+		},
+		{
+			"checksumSHA1": "+uojpoifditV+IIYhEiahrSOM5M=",
+			"path": "github.com/Pallinder/sillyname-go",
+			"revision": "97aeae9e6ba11ec62a40cf8b6b4bc42116c0a303",
+			"revisionTime": "2013-07-30T14:29:14Z"
+		},
+		{
+			"checksumSHA1": "qsuZ3GBy5+UGOI9/+iR7xfOGIxs=",
+			"path": "github.com/go-pg/pg",
+			"revision": "2cb96043eb15699002a72c64f2b38d62cf6e4bc0",
+			"revisionTime": "2018-05-17T09:15:26Z"
+		},
+		{
+			"checksumSHA1": "s3ccNxUVGClLrztjnxkIge/LZik=",
+			"path": "github.com/go-pg/pg/internal",
+			"revision": "2cb96043eb15699002a72c64f2b38d62cf6e4bc0",
+			"revisionTime": "2018-05-17T09:15:26Z"
+		},
+		{
+			"checksumSHA1": "HGtwOnzZHu3KF9ZVNQ1thdekjn4=",
+			"path": "github.com/go-pg/pg/internal/parser",
+			"revision": "2cb96043eb15699002a72c64f2b38d62cf6e4bc0",
+			"revisionTime": "2018-05-17T09:15:26Z"
+		},
+		{
+			"checksumSHA1": "8BS7nKMcEVACAzICl7TsCT6gNP4=",
+			"path": "github.com/go-pg/pg/internal/pool",
+			"revision": "2cb96043eb15699002a72c64f2b38d62cf6e4bc0",
+			"revisionTime": "2018-05-17T09:15:26Z"
+		},
+		{
+			"checksumSHA1": "ZJacjDQBte1cLiAasw4Reuv9EXE=",
+			"path": "github.com/go-pg/pg/orm",
+			"revision": "2cb96043eb15699002a72c64f2b38d62cf6e4bc0",
+			"revisionTime": "2018-05-17T09:15:26Z"
+		},
+		{
+			"checksumSHA1": "r4OxPT9HUcRKU/rV5y6kc327AFE=",
+			"path": "github.com/go-pg/pg/types",
+			"revision": "2cb96043eb15699002a72c64f2b38d62cf6e4bc0",
+			"revisionTime": "2018-05-17T09:15:26Z"
+		},
+		{
+			"checksumSHA1": "4eelJOSLZoDzLuaJvgilOBVNovU=",
+			"path": "github.com/jinzhu/inflection",
+			"revision": "04140366298a54a039076d798123ffa108fff46c",
+			"revisionTime": "2018-03-08T03:36:59Z"
+		},
+		{
+			"checksumSHA1": "sBF9qHqFNm3GEhKPykUAkahf1YM=",
+			"path": "github.com/pariz/gountries",
+			"revision": "adb00f6513a307f9f7a4ee57eca79a703b8a7272",
+			"revisionTime": "2017-10-19T11:17:38Z"
+		},
+		{
+			"checksumSHA1": "Q5i01uUHf1v1p93jQbvgrb1U/TI=",
+			"path": "github.com/rs/xid",
+			"revision": "4612dfc7d89df26305fae0b5c4f81ff8cbfe2bfe",
+			"revisionTime": "2018-07-27T18:10:53Z"
+		},
+		{
+			"checksumSHA1": "wyuEvb3yMLCLTeFw9nrJyKjLPAs=",
+			"path": "golang.org/x/sys/unix",
+			"revision": "3b87a42e500a6dc65dae1a55d0b641295971163e",
+			"revisionTime": "2018-04-06T09:01:59Z"
+		},
+		{
+			"checksumSHA1": "Dfz4tGItokMvHZENCsBmPPB8FGQ=",
+			"path": "golang.org/x/sys/windows",
+			"revision": "3b87a42e500a6dc65dae1a55d0b641295971163e",
+			"revisionTime": "2018-04-06T09:01:59Z"
+		},
+		{
+			"checksumSHA1": "ZSWoOPUNRr5+3dhkLK3C4cZAQPk=",
+			"path": "gopkg.in/yaml.v2",
+			"revision": "5420a8b6744d3b0345ab293f6fcba19c978f1183",
+			"revisionTime": "2018-03-28T19:50:20Z"
+		}
+	],
+	"rootPath": "sample_db"
+}
