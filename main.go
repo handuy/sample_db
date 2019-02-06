@@ -1,12 +1,10 @@
 package main
 
-import "sample_db/model"
-
 func main() {
-	db := model.ConnectDb()
+	db := ConnectDb()
 	defer db.Close()
-	model.InitializeDatabase(db)
-	model.SaveClubLeagueData(db)
-	model.SaveNationCupData(db)
-	model.SavePlayerData(db)
+	InitializeDatabase(db)
+	SaveClubLeagueData(db)
+	SaveNationCupData(db)
+	SavePlayerData(db)
 }
